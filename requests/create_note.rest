@@ -2,6 +2,6 @@ POST  http://localhost:3001/api/notes
 Content-Type: application/json
 
 {
-    "content": "New Note desde Rest Client",
+    "content": "New Note 3 From VSCode To Mongo",
     "important": true
 }

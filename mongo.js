@@ -1,5 +1,5 @@
+/* eslint-disable no-undef */
 const mongoose = require('mongoose');
-// eslint-disable-next-line no-undef
 const connectionString = process.env.MONGO_DB_URI;
 
 // conexion a mongodb
@@ -12,3 +12,7 @@ mongoose.connect(connectionString, {
   .catch((err) => {
     console.error(err);
   });
+
+process.on('uncaughtException', () => {
+  mongoose.connection.close();
+});
