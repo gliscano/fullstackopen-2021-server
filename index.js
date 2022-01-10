@@ -19,7 +19,7 @@ app.get('/', (request, response) => {
   response.send('<h1>Hello Word!!!</h1>');
 });
 
-app.get('/api/notes', (request, response) => {
+/* app.get('/api/notes', (request, response) => {
   Note.find({})
     .then((notes) => {
       response.json(notes);
@@ -28,6 +28,11 @@ app.get('/api/notes', (request, response) => {
     .catch((err) => {
       console.log(err);
     });
+}); */
+
+app.get('/api/notes', async (request, response) => {
+  const notes = await Note.find({});
+  response.json(notes);
 });
 
 app.get('/api/notes/:id', (request, response, next) => {
@@ -64,15 +69,7 @@ app.put('/api/notes/:id', (request, response, next) => {
     });
 });
 
-app.delete('/api/notes/:id', (request, response, next) => {
-  const { id } = request.params;
-
-  Note.findByIdAndDelete(id)
-    .then(() => response.status(204).end())
-    .catch((err) => next(err));
-});
-
-app.post('/api/notes/', (request, response) => {
+app.post('/api/notes/', async (request, response, next) => {
   const note = request.body;
 
   if ( !note || !note.content ) {
@@ -87,10 +84,28 @@ app.post('/api/notes/', (request, response) => {
     date: new Date().toISOString()
   });
 
-  newNote.save()
-    .then((savedNote) => {
-      response.status(201).json(savedNote);
-    });
+  // newNote.save()
+  //   .then((savedNote) => {
+  //     response.status(201).json(savedNote);
+  //   });
+
+  try {
+    const saveNote = await newNote.save();
+    response.status(201).json(saveNote); 
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.delete('/api/notes/:id', async (request, response, next) => {
+  const { id } = request.params;
+
+  try {
+    await Note.findByIdAndDelete(id);
+    response.status(204).end(); 
+  } catch (error) {
+    next(error);
+  }
 });
 
 app.use(notFound);
