@@ -7,6 +7,7 @@ const logger = require('./loggerMiddleware');
 const cors = require('cors');
 const notFound = require('./middleware/notFound');
 const handleErrors = require('./middleware/handleErrors');
+const { isValidObjectId, SchemaTypes } = require('mongoose');
 const app = express();
 
 app.use(cors());
@@ -100,10 +101,17 @@ app.post('/api/notes/', async (request, response, next) => {
 app.delete('/api/notes/:id', async (request, response, next) => {
   const { id } = request.params;
 
+  if (!isValidObjectId(id)) {
+    return response.status(400).json({
+      error: 'noteId is not valid'
+    });
+  }
+
   try {
     await Note.findByIdAndDelete(id);
     response.status(204).end(); 
   } catch (error) {
+    console.log(error);
     next(error);
   }
 });
