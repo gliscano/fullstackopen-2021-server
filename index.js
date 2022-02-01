@@ -7,7 +7,8 @@ const logger = require('./loggerMiddleware');
 const cors = require('cors');
 const notFound = require('./middleware/notFound');
 const handleErrors = require('./middleware/handleErrors');
-const { isValidObjectId, SchemaTypes } = require('mongoose');
+const usersRouter = require('./controller/users');
+const { isValidObjectId } = require('mongoose');
 const app = express();
 
 app.use(cors());
@@ -115,6 +116,9 @@ app.delete('/api/notes/:id', async (request, response, next) => {
     next(error);
   }
 });
+
+// Controllers
+app.use('/api/users', usersRouter);
 
 app.use(notFound);
 app.use(handleErrors);
